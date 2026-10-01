@@ -55,8 +55,11 @@ Disabled the departing user's account instead of deleting it, which preserves gr
 ## Troubleshooting
 
 ### Guest Additions install failed for a standard user
+
 **Issue:** CLIENT1 had display problems because VirtualBox Guest Additions were missing, and the installer failed when run as a standard domain user.
+
 **Cause:** Installing drivers requires administrator rights.
+
 **Fix:** Ran the installer with Run as administrator using domain admin credentials. The install completed and the display issue was resolved.
 
 ### Marketing folder open to all domain users
@@ -82,21 +85,33 @@ I deliberately broke three things on CLIENT1, then diagnosed and fixed each one 
 
 ### Scenario 1: Wrong DNS server (SUP-10)
 
-**Symptom:** User could not reach mydomain.com or shared drives by name. **Diagnosis:** Ping to the DC by IP worked, but nslookup timed out. ipconfig /all showed the DNS server set to 172.16.0.99 instead of the DC. **Fix:** Restored automatic DNS so the client receives the DC through DHCP.
+**Symptom:** User could not reach mydomain.com or shared drives by name. 
+
+**Diagnosis:** Ping to the DC by IP worked, but nslookup timed out. ipconfig /all showed the DNS server set to 172.16.0.99 instead of the DC. 
+
+**Fix:** Restored automatic DNS so the client receives the DC through DHCP.
 
 ![DNS broken](50_dns_broken.png)
 ![DNS fixed](51_dns_fixed.png)
 
 ### Scenario 2: DHCP service stopped (SUP-11)
 
-**Symptom:** No network access at all. **Diagnosis:** ipconfig /renew could not reach a DHCP server, and the client assigned itself a 169.254 address with no gateway. The DHCP Server service on the DC was stopped. **Fix:** Started the DHCP Server service and renewed the client lease.
+**Symptom:** No network access at all. 
+
+**Diagnosis:** ipconfig /renew could not reach a DHCP server, and the client assigned itself a 169.254 address with no gateway. The DHCP Server service on the DC was stopped. 
+
+**Fix:** Started the DHCP Server service and renewed the client lease.
 
 ![DHCP broken](52_dhcp_broken.png)
 ![DHCP fixed](53_dhcp_fixed.png)
 
 ### Scenario 3: Network adapter disabled (SUP-12)
 
-**Symptom:** Sudden loss of all network access. **Diagnosis:** ipconfig returned no adapter information at all. Network Connections showed the Ethernet adapter disabled. **Fix:** Enabled the adapter.
+**Symptom:** Sudden loss of all network access. 
+
+**Diagnosis:** ipconfig returned no adapter information at all. Network Connections showed the Ethernet adapter disabled. 
+
+**Fix:** Enabled the adapter.
 
 ![Adapter broken](54_adapter_broken.png)
 ![Adapter fixed](55_adapter_fixed.png)
