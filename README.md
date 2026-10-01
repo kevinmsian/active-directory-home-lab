@@ -74,8 +74,43 @@ All 9 tasks and incidents were logged in Jira Service Management: 7 service requ
 ![Customer request form](jira_01_request_form.png)
 ![Resolved ticket with SLAs and internal notes](jira_03_ticket_resolved.png)
 ![Customer view of the resolved request](jira_04_customer_resolved.png)
-![All 9 tickets resolved](jira_05_all_tickets_resolved.png)
+![All 12 tickets resolved](jira_05_all_tickets_resolved.png)
 
 ## Skills Demonstrated
 
 Active Directory user and account management, Group Policy creation and linking, OU structure and how it affects policy scope, share and NTFS permissions, least privilege access through security groups, secure offboarding, structured troubleshooting, and ticket documentation in an ITSM tool.
+
+## Network Troubleshooting
+
+I deliberately broke three things on CLIENT1, then diagnosed and fixed each one using the CompTIA six step troubleshooting methodology. Each fix was logged as a Jira ticket (SUP-10 to SUP-12). VirtualBox snapshots were taken first as a rollback option.
+
+### Scenario 1: Wrong DNS server (SUP-10)
+Symptom: user could not reach mydomain.com or shared drives by name.
+Diagnosis: ping to the DC by IP worked, but nslookup timed out. ipconfig /all showed the DNS server set to 172.16.0.99 instead of the DC.
+Fix: restored automatic DNS so the client receives the DC through DHCP.
+
+![DNS broken](50_dns_broken.png)
+![DNS fixed](51_dns_fixed.png)
+
+### Scenario 2: DHCP service stopped (SUP-11)
+Symptom: no network access at all.
+Diagnosis: ipconfig /renew could not reach a DHCP server, and the client assigned itself a 169.254 address with no gateway. The DHCP Server service on the DC was stopped.
+Fix: started the DHCP Server service and renewed the client lease.
+
+![DHCP broken](52_dhcp_broken.png)
+![DHCP fixed](53_dhcp_fixed.png)
+
+### Scenario 3: Network adapter disabled (SUP-12)
+Symptom: sudden loss of all network access.
+Diagnosis: ipconfig returned no adapter information at all. Network Connections showed the Ethernet adapter disabled.
+Fix: enabled the adapter.
+
+![Adapter broken](54_adapter_broken.png)
+![Adapter fixed](55_adapter_fixed.png)
+
+### Quick reference
+| Symptom | Likely cause |
+|---|---|
+| Ping by IP works, names fail | DNS |
+| Address starts with 169.254 | DHCP unreachable |
+| ipconfig shows no adapter | Adapter disabled or disconnected |
