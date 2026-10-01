@@ -11,7 +11,7 @@ A virtual Windows domain built in Oracle VirtualBox to practice Tier 1 help desk
 
 The DC has two network adapters: one connected to the internet through VirtualBox NAT, and one on an internal network shared with CLIENT1. CLIENT1 gets its IP address from the DC's DHCP server and reaches the internet through the DC. A PowerShell script populated the domain with 1,000 test users in the _USERS OU.
 
-**Tools used:** Oracle VirtualBox, Active Directory Users and Computers, Group Policy Management, PowerShell, Jira Service Management
+**Tools used:** Oracle VirtualBox, Active Directory Users and Computers, Group Policy Management, PowerShell, Command Prompt (ipconfig, nslookup, ping), Jira Service Management
 
 ## Help Desk Tasks
 
@@ -69,48 +69,48 @@ Disabled the departing user's account instead of deleting it, which preserves gr
 
 ## Ticket Documentation in Jira Service Management
 
-All 9 tasks and incidents were logged in Jira Service Management: 7 service requests and 2 incidents. Each ticket was submitted through the customer portal, assigned, worked with an internal note documenting the steps and screenshots, answered with a customer facing reply, and resolved within SLA. The permissions incident is linked to the original folder access request.
+All 12 tasks and incidents were logged in Jira Service Management: 7 service requests and 5 incidents. Each ticket was submitted through the customer portal, assigned, worked with an internal note documenting the steps and screenshots, answered with a customer facing reply, and resolved within SLA. The permissions incident is linked to the original folder access request, and the three network incidents (SUP-10 to SUP-12) have internal notes structured around the six step troubleshooting methodology.
 
 ![Customer request form](jira_01_request_form.png)
 ![Resolved ticket with SLAs and internal notes](jira_03_ticket_resolved.png)
 ![Customer view of the resolved request](jira_04_customer_resolved.png)
 ![All 12 tickets resolved](jira_05_all_tickets_resolved.png)
 
-## Skills Demonstrated
-
-Active Directory user and account management, Group Policy creation and linking, OU structure and how it affects policy scope, share and NTFS permissions, least privilege access through security groups, secure offboarding, structured troubleshooting, and ticket documentation in an ITSM tool.
-
 ## Network Troubleshooting
 
 I deliberately broke three things on CLIENT1, then diagnosed and fixed each one using the CompTIA six step troubleshooting methodology. Each fix was logged as a Jira ticket (SUP-10 to SUP-12). VirtualBox snapshots were taken first as a rollback option.
 
 ### Scenario 1: Wrong DNS server (SUP-10)
-Symptom: user could not reach mydomain.com or shared drives by name.
-Diagnosis: ping to the DC by IP worked, but nslookup timed out. ipconfig /all showed the DNS server set to 172.16.0.99 instead of the DC.
-Fix: restored automatic DNS so the client receives the DC through DHCP.
+
+**Symptom:** User could not reach mydomain.com or shared drives by name. **Diagnosis:** Ping to the DC by IP worked, but nslookup timed out. ipconfig /all showed the DNS server set to 172.16.0.99 instead of the DC. **Fix:** Restored automatic DNS so the client receives the DC through DHCP.
 
 ![DNS broken](50_dns_broken.png)
 ![DNS fixed](51_dns_fixed.png)
 
 ### Scenario 2: DHCP service stopped (SUP-11)
-Symptom: no network access at all.
-Diagnosis: ipconfig /renew could not reach a DHCP server, and the client assigned itself a 169.254 address with no gateway. The DHCP Server service on the DC was stopped.
-Fix: started the DHCP Server service and renewed the client lease.
+
+**Symptom:** No network access at all. **Diagnosis:** ipconfig /renew could not reach a DHCP server, and the client assigned itself a 169.254 address with no gateway. The DHCP Server service on the DC was stopped. **Fix:** Started the DHCP Server service and renewed the client lease.
 
 ![DHCP broken](52_dhcp_broken.png)
 ![DHCP fixed](53_dhcp_fixed.png)
 
 ### Scenario 3: Network adapter disabled (SUP-12)
-Symptom: sudden loss of all network access.
-Diagnosis: ipconfig returned no adapter information at all. Network Connections showed the Ethernet adapter disabled.
-Fix: enabled the adapter.
+
+**Symptom:** Sudden loss of all network access. **Diagnosis:** ipconfig returned no adapter information at all. Network Connections showed the Ethernet adapter disabled. **Fix:** Enabled the adapter.
 
 ![Adapter broken](54_adapter_broken.png)
 ![Adapter fixed](55_adapter_fixed.png)
 
 ### Quick reference
+
 | Symptom | Likely cause |
 |---|---|
 | Ping by IP works, names fail | DNS |
 | Address starts with 169.254 | DHCP unreachable |
 | ipconfig shows no adapter | Adapter disabled or disconnected |
+
+## Skills Demonstrated
+
+Active Directory user and account management, Group Policy creation and linking, OU structure and how it affects policy scope, share and NTFS permissions, least privilege access through security groups, secure offboarding, network troubleshooting of DNS, DHCP, and adapter faults with ipconfig, nslookup, and ping, structured troubleshooting using the CompTIA methodology, and ticket documentation in an ITSM tool.
+
+
